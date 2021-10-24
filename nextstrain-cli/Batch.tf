@@ -65,7 +65,8 @@ resource "aws_iam_policy" "access_to_batch" {
           "batch:CancelJob",
           "batch:SubmitJob",
           "batch:DescribeJobDefinitions",
-          "batch:RegisterJobDefinition"
+          "batch:RegisterJobDefinition",
+          "batch:TagResource"
         ],
         "Resource": "*"
       },
@@ -73,7 +74,7 @@ resource "aws_iam_policy" "access_to_batch" {
         "Sid": "VisualEditor1",
         "Effect": "Allow",
         "Action": "iam:PassRole",
-        "Resource": "arn:aws:iam::*:role/NextstrainJobsRole"
+        Resource = aws_iam_role.ecs_task_role.arn
       }
     ]
   })
@@ -179,7 +180,6 @@ resource "aws_iam_role_policy_attachment" "batch_service_role" {
   role       = aws_iam_role.batch_service_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
 }
-
 
 resource "aws_iam_group" "nextstrain_jobs" {
   name = "nextstrain-jobs"
