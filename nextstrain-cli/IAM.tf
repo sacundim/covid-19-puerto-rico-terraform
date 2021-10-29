@@ -56,7 +56,7 @@ resource "aws_iam_policy" "access_to_bucket" {
   })
 }
 
-resource "aws_iam_policy" "access_to_logs" {
+resource "aws_iam_policy" "read_logs" {
   name        = "${var.project_name}-jobs-access-to-logs"
   description = "Grant Nextstrain CLI access to AWS logging."
 
@@ -80,6 +80,30 @@ resource "aws_iam_policy" "access_to_logs" {
   })
 }
 
+resource "aws_iam_policy" "write_logs" {
+  name        = "${var.project_name}-jobs-access-to-logs"
+  description = "Grant Nextstrain CLI access to AWS logging."
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "VisualEditor0",
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": [
+          "arn:aws:logs:*:*:log-group:/aws/batch/job",
+          "arn:aws:logs:*:*:log-group:/aws/batch/job:log-stream:*"
+        ]
+      }
+    ]
+  })
+}
+
+
 resource "aws_iam_role" "ecs_task_role" {
   name = "${var.project_name}-jobs-role"
   tags = {
@@ -101,9 +125,14 @@ resource "aws_iam_role" "ecs_task_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_role" {
+resource "aws_iam_role_policy_attachment" "ecs_task_role_read_bucket" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.access_to_bucket.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_role_write_logs" {
+  role       = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.write_logs.arn
 }
 
 
@@ -149,7 +178,7 @@ resource "aws_iam_group_policy_attachment" "access_to_bucket" {
 
 resource "aws_iam_group_policy_attachment" "access_to_logs" {
   group      = aws_iam_group.nextstrain_jobs.name
-  policy_arn = aws_iam_policy.access_to_logs.arn
+  policy_arn = aws_iam_policy.read_logs.arn
 }
 
 data "aws_iam_user" "user" {
