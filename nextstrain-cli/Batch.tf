@@ -14,8 +14,8 @@ resource "aws_batch_job_definition" "nextstrain_job" {
       "platformVersion": "LATEST"
     },
     resourceRequirements = [
-      {"type": "VCPU", "value": "4"},
-      {"type": "MEMORY", "value": "30720"}
+      {"type": "VCPU", "value": tostring(var.vcpus)},
+      {"type": "MEMORY", "value": tostring(var.memory)}
     ]
     networkConfiguration = {
       "assignPublicIp": "ENABLED"
@@ -33,11 +33,11 @@ resource "aws_batch_job_definition" "nextstrain_job" {
   })
 
   retry_strategy {
-    attempts = 1
+    attempts = var.retry_attempts
   }
 
   timeout {
-    attempt_duration_seconds = 14440
+    attempt_duration_seconds = var.timeout_seconds
   }
 }
 

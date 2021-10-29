@@ -35,3 +35,23 @@ variable "iam_user" {
   description = "Username to attach permissions to in IAM."
   default = "covid-19-puerto-rico"
 }
+
+variable "vcpus" {
+  description = "How many vCPUs to request per Batch task.  With Fargate, the max is 4."
+  default = 4
+}
+
+variable "memory" {
+  description = "How much memory to request per task. With Fargat, the max is 30720."
+  default = 30720
+}
+
+variable "retry_attempts" {
+  description = "How many times to try tasks in AWS Batch."
+  default = 1  # Just try once
+}
+
+variable "timeout_seconds" {
+  description = "Have AWS Batch kill jobs that exceed this many seconds."
+  default = 14440  # four hours
+}
