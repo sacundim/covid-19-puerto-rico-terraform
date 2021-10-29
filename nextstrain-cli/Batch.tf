@@ -16,6 +16,9 @@ resource "aws_batch_job_definition" "nextstrain_job" {
       {"type": "VCPU", "value": "4"},
       {"type": "MEMORY", "value": "8192"}
     ]
+    networkConfiguration = {
+      "assignPublicIp": "ENABLED"
+    }
 /*
     "logConfiguration": {
       "logDriver": "awslogs",
