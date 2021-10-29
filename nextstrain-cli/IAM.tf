@@ -57,7 +57,7 @@ resource "aws_iam_policy" "access_to_bucket" {
 }
 
 resource "aws_iam_policy" "read_logs" {
-  name        = "${var.project_name}-jobs-access-to-logs"
+  name        = "${var.project_name}-read-logs"
   description = "Grant Nextstrain CLI access to AWS logging."
 
   policy = jsonencode({
@@ -81,7 +81,7 @@ resource "aws_iam_policy" "read_logs" {
 }
 
 resource "aws_iam_policy" "write_logs" {
-  name        = "${var.project_name}-jobs-access-to-logs"
+  name        = "${var.project_name}-write-logs"
   description = "Grant Nextstrain CLI access to AWS logging."
 
   policy = jsonencode({
