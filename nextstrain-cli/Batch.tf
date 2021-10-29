@@ -9,6 +9,7 @@ resource "aws_batch_job_definition" "nextstrain_job" {
   container_properties = jsonencode({
     image = "nextstrain/base:latest"
     executionRoleArn = aws_iam_role.ecs_task_role.arn
+    jobRoleArn = aws_iam_role.ecs_job_role.arn
     fargatePlatformConfiguration = {
       "platformVersion": "LATEST"
     },

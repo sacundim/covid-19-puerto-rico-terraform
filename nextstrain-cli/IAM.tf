@@ -26,6 +26,12 @@ resource "aws_iam_policy" "access_to_batch" {
         "Effect": "Allow",
         "Action": "iam:PassRole",
         Resource = aws_iam_role.ecs_task_role.arn
+      },
+      {
+        "Sid": "VisualEditor2",
+        "Effect": "Allow",
+        "Action": "iam:PassRole",
+        Resource = aws_iam_role.ecs_job_role.arn
       }
     ]
   })
@@ -80,32 +86,9 @@ resource "aws_iam_policy" "read_logs" {
   })
 }
 
-resource "aws_iam_policy" "write_logs" {
-  name        = "${var.project_name}-write-logs"
-  description = "Grant Nextstrain CLI access to AWS logging."
-
-  policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "VisualEditor0",
-        "Effect": "Allow",
-        "Action": [
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ],
-        "Resource": [
-          "arn:aws:logs:*:*:log-group:/aws/batch/job",
-          "arn:aws:logs:*:*:log-group:/aws/batch/job:log-stream:*"
-        ]
-      }
-    ]
-  })
-}
-
 
 resource "aws_iam_role" "ecs_task_role" {
-  name = "${var.project_name}-jobs-role"
+  name = "${var.project_name}-task-role"
   tags = {
     Project = var.project_name
   }
@@ -125,14 +108,36 @@ resource "aws_iam_role" "ecs_task_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_role_read_bucket" {
+resource "aws_iam_role_policy_attachment" "ecs_task_role_policy" {
   role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.access_to_bucket.arn
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_role_write_logs" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.write_logs.arn
+
+resource "aws_iam_role" "ecs_job_role" {
+  name = "${var.project_name}-job-role"
+  tags = {
+    Project = var.project_name
+  }
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_job_role_read_bucket" {
+  role       = aws_iam_role.ecs_job_role.name
+  policy_arn = aws_iam_policy.access_to_bucket.arn
 }
 
 
