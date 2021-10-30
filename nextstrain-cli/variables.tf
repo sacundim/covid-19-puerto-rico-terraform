@@ -37,13 +37,13 @@ variable "iam_user" {
 }
 
 variable "vcpus" {
-  description = "How many vCPUs to request per Batch task.  With Fargate, the max is 4."
-  default = 4
+  description = "How many vCPUs to request per Batch task.  With Fargate, the max is 4; more forces EC2."
+  default = 8
 }
 
 variable "memory" {
-  description = "How much memory to request per task. With Fargat, the max is 30720."
-  default = 30720
+  description = "How much memory to request per task. With Fargate, the max is 30720."
+  default = 14336
 }
 
 variable "retry_attempts" {
@@ -53,5 +53,5 @@ variable "retry_attempts" {
 
 variable "timeout_seconds" {
   description = "Have AWS Batch kill jobs that exceed this many seconds."
-  default = 14440  # four hours
+  default = 18000  # five hours
 }
