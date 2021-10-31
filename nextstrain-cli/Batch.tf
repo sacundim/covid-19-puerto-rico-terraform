@@ -1,4 +1,5 @@
 resource "aws_batch_job_definition" "nextstrain_job" {
+  # Nextstrain CLI expects this exact name
   name = "nextstrain-job"
   tags = {
     Project = var.project_name
@@ -66,6 +67,7 @@ resource "aws_batch_compute_environment" "nextstrain" {
 
 
 resource "aws_batch_job_queue" "nextstrain-queue" {
+  # Nextstrain CLI expects this exact name
   name     = "nextstrain-job-queue"
   tags = {
     Project = var.project_name
