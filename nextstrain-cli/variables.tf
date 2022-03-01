@@ -53,5 +53,5 @@ variable "retry_attempts" {
 
 variable "timeout_seconds" {
   description = "Have AWS Batch kill jobs that exceed this many seconds."
-  default = 18000  # five hours
+  default = 21600  # six hours
 }
